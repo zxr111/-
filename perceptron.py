@@ -13,11 +13,15 @@ def loadData(filePath):
     df = pd.read_csv(filePath, header=None)
     dataArr = df.iloc[:, 1:]
     dataLable = df.iloc[:, 0]
+    #线性分割只有两个类别 1 和 -1
     for i in range(len(dataLable)):
         if dataLable[i] >= 5:
             dataLable[i] = 1
         else:
             dataLable[i] = -1
+    # for k in range(len(dataArr)):
+    #     for i in range(len(dataArr[0])):
+    #         print(dataArr[k][i])
     # f = open(filePath, 'r')
     # for line in f.readlines():
     #     #strip()用于去除 '/n' 再用 ','分割成数组
@@ -95,6 +99,7 @@ if __name__ == '__main__':
     testArr, testLable = loadData('./Mnist/mnist_test/mnist_test.csv')
     start = time.time()
     w, b = train(dataArr, dataLable, 10)
+    print(w, b)
     end = time.time()
     print('训练时间为：%ds' % (end - start))
     accruRate = test(testArr, testLable, w, b)
