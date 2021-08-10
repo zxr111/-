@@ -1,6 +1,7 @@
 
 import numpy as np
 import time
+import pandas as pd
 
 def loadData(filePath):
     '''
@@ -9,18 +10,25 @@ def loadData(filePath):
     :return: 数据集数组dataArr和数据标记数组dataLable
     '''
     print('开始读取数据')
-    dataArr = []; dataLable = [];
-    f = open(filePath, 'r')
-    for line in f.readlines():
-        #strip()用于去除 '/n' 再用 ','分割成数组
-        curLine = line.strip().split(',')
-        #线性分割只有两个类别 1 和 -1
-        if int(curLine[0]) >= 5:
-            dataLable.append(1)
+    df = pd.read_csv(filePath, header=None)
+    dataArr = df.iloc[:, 1:]
+    dataLable = df.iloc[:, 0]
+    for i in range(len(dataLable)):
+        if dataLable[i] >= 5:
+            dataLable[i] = 1
         else:
-            dataLable.append(-1)
-        #加载数据集并进行归一化处理
-        dataArr.append([int(num)/255 for num in curLine[1:]])
+            dataLable[i] = -1
+    # f = open(filePath, 'r')
+    # for line in f.readlines():
+    #     #strip()用于去除 '/n' 再用 ','分割成数组
+    #     curLine = line.strip().split(',')
+    #     #线性分割只有两个类别 1 和 -1
+    #     if int(curLine[0]) >= 5:
+    #         dataLable.append(1)
+    #     else:
+    #         dataLable.append(-1)
+    #     #加载数据集并进行归一化处理
+    #     dataArr.append([int(num)/255 for num in curLine[1:]])
     return dataArr, dataLable
 
 def train(dataArr, dataLable, iter=50, r=0.001):
@@ -39,7 +47,7 @@ def train(dataArr, dataLable, iter=50, r=0.001):
     #把读入标签转化为 N * 1形式
     trainLable = np.mat(dataLable).T
     #读取训练数据数组大小
-    m, n = numpy.shape(trainData)
+    m, n = np.shape(trainData)
     #初始化w, b。w为n维横向量，与原向量长度保持一致
     w = np.zeros((1, n))
     b = 0
@@ -71,7 +79,7 @@ def test(testArr, testLable, w, b):
     #模型预测错误个数
     errCnt = 0
     testMat = np.mat(testArr)
-    testLabl = np.mat(testLable).T
+    testLable = np.mat(testLable).T
     m, n = np.shape(testArr)
 
     for i in range(m):
@@ -84,9 +92,9 @@ def test(testArr, testLable, w, b):
 
 if __name__ == '__main__':
     dataArr, dataLable = loadData('./Mnist/mnist_train/mnist_train.csv')
-    testArr, testLable = loadData('./Mnist/minst_test/mnist_test.csv')
+    testArr, testLable = loadData('./Mnist/mnist_test/mnist_test.csv')
     start = time.time()
-    w, b = train(dataArr, dataLable, 5)
+    w, b = train(dataArr, dataLable, 10)
     end = time.time()
     print('训练时间为：%ds' % (end - start))
     accruRate = test(testArr, testLable, w, b)
