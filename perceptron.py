@@ -3,7 +3,7 @@ import numpy as np
 import time
 import pandas as pd
 
-def loadData(filePath):
+def load_data(filePath):
     '''
     读取Mnist训练数据集
     :param filePath: Mnist训练数据集的路径
@@ -11,31 +11,31 @@ def loadData(filePath):
     '''
     print('开始读取数据')
     df = pd.read_csv(filePath, header=None)
-    dataArr = df.iloc[:, 1:]
-    dataLable = df.iloc[:, 0]
+    data_arr = df.iloc[:, 1:]
+    data_lable = df.iloc[:, 0]
     #线性分割只有两个类别 1 和 -1
-    for i in range(len(dataLable)):
-        if dataLable[i] >= 5:
-            dataLable[i] = 1
+    for i in range(len(data_lable)):
+        if data_lable[i] >= 5:
+            data_lable[i] = 1
         else:
-            dataLable[i] = -1
-    # for k in range(len(dataArr)):
-    #     for i in range(len(dataArr[0])):
-    #         print(dataArr[k][i])
+            data_lable[i] = -1
+    # for k in range(len(data_arr)):
+    #     for i in range(len(data_arr[0])):
+    #         print(data_arr[k][i])
     # f = open(filePath, 'r')
     # for line in f.readlines():
     #     #strip()用于去除 '/n' 再用 ','分割成数组
     #     curLine = line.strip().split(',')
     #     #线性分割只有两个类别 1 和 -1
     #     if int(curLine[0]) >= 5:
-    #         dataLable.append(1)
+    #         data_lable.append(1)
     #     else:
-    #         dataLable.append(-1)
+    #         data_lable.append(-1)
     #     #加载数据集并进行归一化处理
-    #     dataArr.append([int(num)/255 for num in curLine[1:]])
-    return dataArr, dataLable
+    #     data_arr.append([int(num)/255 for num in curLine[1:]])
+    return data_arr, data_lable
 
-def train(dataArr, dataLable, iter=50, r=0.001):
+def train(data_arr, data_lable, iter=50, r=0.001):
     '''
     训练感知机
     :param filePath: 训练文件路径
@@ -47,11 +47,11 @@ def train(dataArr, dataLable, iter=50, r=0.001):
     '''
 
     #把读入的数据转化为数组形式
-    trainData = np.mat(dataArr)
+    train_data = np.mat(data_arr)
     #把读入标签转化为 N * 1形式
-    trainLable = np.mat(dataLable).T
+    train_lable = np.mat(data_lable).T
     #读取训练数据数组大小
-    m, n = np.shape(trainData)
+    m, n = np.shape(train_data)
     #初始化w, b。w为n维横向量，与原向量长度保持一致
     w = np.zeros((1, n))
     b = 0
@@ -60,8 +60,8 @@ def train(dataArr, dataLable, iter=50, r=0.001):
     print('开始训练')
     for k in range(0, iter):
         for i in range(0, m):
-            xi = trainData[i]
-            yi = trainLable[i]
+            xi = train_data[i]
+            yi = train_lable[i]
             #损失函数大于0说明数据该点不符合
             #其中 w * xi + b 为函数距离
             # 当函数距离大于0，该点在超平面上方
@@ -78,25 +78,25 @@ def train(dataArr, dataLable, iter=50, r=0.001):
 
     return w, b
 
-def test(testArr, testLable, w, b):
+def test(test_arr, test_lable, w, b):
     print('开始测试')
     #模型预测错误个数
     errCnt = 0
-    testMat = np.mat(testArr)
-    testLable = np.mat(testLable).T
-    m, n = np.shape(testArr)
+    testMat = np.mat(test_arr)
+    test_lable = np.mat(test_lable).T
+    m, n = np.shape(test_arr)
 
     for i in range(m):
         xi = testMat[i]
-        yi = testLable[i]
+        yi = test_lable[i]
         if -1 * yi * (w * xi.T + b) >= 0:
             errCnt += 1
     #返回正确率
     return 1 - (errCnt / m)
 
 if __name__ == '__main__':
-    dataArr, dataLable = loadData('./Mnist/mnist_train/mnist_train.csv')
-    testArr, testLable = loadData('./Mnist/mnist_test/mnist_test.csv')
+    dataArr, dataLable = load_data('./Mnist/mnist_train/mnist_train.csv')
+    testArr, testLable = load_data('./Mnist/mnist_test/mnist_test.csv')
     start = time.time()
     w, b = train(dataArr, dataLable, 10)
     print(w, b)
