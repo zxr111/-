@@ -45,7 +45,7 @@ def naive_bayes_pred(PYCk, PXxYCk, x):
             sum += PXxYCk[i][j][x[j]]
         P[i] = sum + PYCk[i]
 
-    return np.argmax(P[i])
+    return P.index(max(P))
 
 def cnt_PYCk(data_lable, U):
     '''
